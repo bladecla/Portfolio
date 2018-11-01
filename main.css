@@ -1,0 +1,113 @@
+html, body {
+  padding: 0px;
+  margin: 0px;
+}
+
+section {
+  /* text-align: center; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#welcome {
+  text-align: center;
+  position: relative;
+  top: 25%;
+  z-index: 5;
+}
+
+#welcome-section {
+  padding: 0px;
+  display: block;
+  height: 100vh;
+  background: linear-gradient(black 45%, rebeccapurple, skyblue);
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+#blake-container {
+  display: inline-block;
+  height: 60%;
+  width: 100%;
+  padding-bottom: 0px;
+  margin: 0 auto;
+  position: absolute;
+  bottom: 0px;
+}
+
+#employable-hunk {
+  width: 100%;
+  height: 100%;
+  bottom: 0px;
+  position: absolute;
+}
+
+#navbar {
+  width: 100%;
+  height: 5vh;
+  position: fixed;
+  display: flex;
+  justify-content: space-around;
+  z-index: 3;
+}
+
+.navbutton {
+  width: 100%;
+  text-align: center;
+}
+.navbutton.red {
+  background-color: darkred;
+}
+.navbutton.red:hover {
+  background-color: red;
+}
+.navbutton.blue {
+  background-color: darkblue;
+}
+.navbutton.blue:hover {
+  background-color: blue;
+}
+.navbutton.green {
+  background-color: darkgreen;
+}
+.navbutton.green:hover {
+  background-color: green;
+}
+
+.navbutton a {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+}
+
+#projects {
+  text-align: center;
+  height: 70vh;
+  background: linear-gradient(#274c77 15%, #427ec2);
+  z-index: 10;
+}
+
+#contact {
+  height: 30vh;
+  background-color: teal;
+  text-align: center;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+@media (max-width: 576px) {
+  #navbar {
+    flex-direction: column;
+    height: 10vh;
+  }
+}
+
+/*# sourceMappingURL=main.css.map */
