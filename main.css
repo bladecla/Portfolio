@@ -59,9 +59,17 @@ section {
   position: absolute;
 }
 
+#brows{
+  transition: all 200ms ease-out;
+}
+
+#brows.raised {
+  transform: translateY(-5%);
+}
+
 #navbar {
   width: 100%;
-  height: 5vh;
+  height: 8vh;
   position: fixed;
   display: flex;
   justify-content: space-around;

@@ -8,7 +8,6 @@ const eyeHeight = 5;
 let px = 0, py = 0, h, w, screenPt, mouseX, mouseY; 
 
 //(re)initialize anchor point for eye movement
-
 const getAnchorScreenCoordinates = function(){
     pt.x = anchor.getAttribute("cx");
     pt.y = anchor.getAttribute("cy");
@@ -38,3 +37,29 @@ window.onscroll = function(){
     setScreenPoint();
     moveEyes(null)
 }
+
+// raise brows on navbar hover
+const toggleBrows = () => document.getElementById("brows").classList.toggle("raised");
+const nav = document.getElementById("navbar");
+nav.onmouseenter = nav.onmouseleave = toggleBrows;
+
+// populate sky
+const sky = document.getElementById("nightsky");
+const starCount = 100;
+const populateSky = function(){
+    for(let i = 0; i < starCount; i++){
+        let star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        let attributes = {
+            cx: `${Math.random() * 100}%`,
+            cy: `${(Math.random() * 85) + 10}%`,
+            r: `${(Math.floor(Math.random() * 4)) + 2}`,
+            fill: "#fff"
+        }
+        for (let key in attributes){
+            star.setAttributeNS(null, key, attributes[key]);
+        }
+        star.classList.add("star");
+        sky.appendChild(star);
+    }
+}
+populateSky();
