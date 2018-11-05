@@ -7,7 +7,7 @@ const eyeWidth = 10;
 const eyeHeight = 5;
 let px = 0, py = 0, h, w, screenPt, mouseX, mouseY; 
 
-//(re)initialize anchor point for eye movement
+//(re)initialize anchor point for eye movement and star animations
 const getAnchorScreenCoordinates = function(){
     pt.x = anchor.getAttribute("cx");
     pt.y = anchor.getAttribute("cy");
@@ -31,8 +31,9 @@ const moveEyes = function(e){
     });
 }
 
-blake.onload = window.onresize = setScreenPoint;
 document.onmousemove = moveEyes;
+blake.onload = window.onresize = setScreenPoint;
+
 window.onscroll = function(){
     setScreenPoint();
     moveEyes(null)
@@ -43,17 +44,25 @@ const toggleBrows = () => document.getElementById("brows").classList.toggle("rai
 const nav = document.getElementById("navbar");
 nav.onmouseenter = nav.onmouseleave = toggleBrows;
 
+
 // populate sky
-const sky = document.getElementById("nightsky");
 const starCount = 100;
+const sky = document.getElementById("nightsky");
 const populateSky = function(){
     for(let i = 0; i < starCount; i++){
         let star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        
+        // if sky loads before blake
+        if(!screenPt) {
+            setScreenPoint();
+            console.log("corrected");
+        }
         let attributes = {
             cx: `${Math.random() * 100}%`,
             cy: `${(Math.random() * 85) + 10}%`,
             r: `${(Math.floor(Math.random() * 4)) + 2}`,
-            fill: "#fff"
+            fill: "#fff",
+            // style: `transform-origin: ${screenPt.x}px ${screenPt.y}px`
         }
         for (let key in attributes){
             star.setAttributeNS(null, key, attributes[key]);
@@ -62,4 +71,6 @@ const populateSky = function(){
         sky.appendChild(star);
     }
 }
-populateSky();
+sky.onload = populateSky;
+
+// make sure anchor point loads before dependent animations
