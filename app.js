@@ -6,6 +6,8 @@ const eyes = Array.from(document.getElementsByClassName("eyes"));
 const eyeWidth = 10;
 const eyeHeight = 5;
 let px = 0, py = 0, h, w, screenPt, mouseX, mouseY; 
+let anim = true;
+console.log(anim)
 
 //(re)initialize anchor point for eye movement and star animations
 const getAnchorScreenCoordinates = function(){
@@ -14,13 +16,25 @@ const getAnchorScreenCoordinates = function(){
     return pt.matrixTransform(blake.getScreenCTM());
 }
 
-const setScreenPoint = () => screenPt = getAnchorScreenCoordinates();
+const setScreenPoint = () => {
+    screenPt = getAnchorScreenCoordinates();
+    console.log(anim)
+}
+
+["webkit", "moz"].forEach((prefix) => blake.addEventListener(prefix + "AnimationEnd", 
+() => anim = false));
+blake.onanimationend = () => anim = false;
+
 
 //calculate and apply eye transform
 const moveEyes = function(e){
     eyes.forEach(eye => {
         h = window.innerHeight;
         w = window.innerWidth;
+        if(anim){
+            setScreenPoint();
+        }
+        
         if(e){
             mouseY = e.clientY;
             mouseX = e.clientX;
@@ -37,6 +51,7 @@ blake.onload = window.onresize = setScreenPoint;
 window.onscroll = function(){
     setScreenPoint();
     moveEyes(null)
+    console.log(anim)
 }
 
 // raise brows on navbar hover
@@ -46,7 +61,7 @@ nav.onmouseenter = nav.onmouseleave = toggleBrows;
 
 
 // populate sky
-const starCount = 100;
+const starCount = 500;
 const sky = document.getElementById("nightsky");
 const populateSky = function(){
     for(let i = 0; i < starCount; i++){
@@ -58,11 +73,11 @@ const populateSky = function(){
             console.log("corrected");
         }
         let attributes = {
-            cx: `${Math.random() * 100}%`,
-            cy: `${(Math.random() * 85) + 10}%`,
+            cx: `${Math.random() * 200}%`,
+            cy: `${(Math.random() * 200)}%`,
             r: `${(Math.floor(Math.random() * 4)) + 2}`,
             fill: "#fff",
-            // style: `transform-origin: ${screenPt.x}px ${screenPt.y}px`
+            style: `transform-origin: ${screenPt.x}px ${screenPt.y}px`
         }
         for (let key in attributes){
             star.setAttributeNS(null, key, attributes[key]);

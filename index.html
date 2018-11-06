@@ -8,6 +8,7 @@
         <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     </head>
     <body>
+        <h1 style="opacity: 0"></h1> <!--For search engines-->
             <nav id="navbar">
                     <div class="red navbutton"><a href="#welcome-section">Back to Top</a></div>
                     <div class="blue navbutton"><a href="#projects">Work</a></div>
@@ -15,11 +16,16 @@
                   </nav>
                   <div id="sky-container">
                     <svg id="nightsky" xmlns="http://www.w3.org/2000/svg">
-                      <circle id="redgiant" class="star" cx="100" cy="150" r="4" fill="#ff0000">
+                      <circle id="test-star" class="star" cx="100" cy="150" r="4" fill="#ff0000">
                     </svg>
                   </div>
                   <section id="welcome-section">
-                    <h1 id="welcome">Welcome</h1>
+                    <svg id="welcome" viewBox="0 0 1000 300"
+                    xmlns="http://www.w3.org/2000/svg">
+                      <text fill="#ffff55" font-size="200" text-anchor="middle"  x="50%" y="50%">
+                        <tspan alignment-baseline="middle">Blake </tspan><tspan alignment-baseline="middle">Clark</tspan>
+                      </text>
+                    </svg>
                     <div id="blake-container">
                             <svg id="employable-hunk" width="800" height="620" version="1.1" viewBox="0 0 221.26 173" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
