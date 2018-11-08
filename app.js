@@ -66,7 +66,7 @@ nav.onmouseenter = nav.onmouseleave = toggleBrows;
 
 
 // populate sky
-const starCount = 150;
+const starCount = 200;
 const sky = document.getElementById("nightsky");
 const populateSky = function(){
     for(let i = 0; i < starCount; i++){
@@ -79,8 +79,8 @@ const populateSky = function(){
         }
         let attributes = {
             cx: `${Math.random() * 100}%`,
-            cy: `${(Math.random() * 100)}%`,
-            r: `${(Math.floor(Math.random() * 4)) + 2}`,
+            cy: `${(Math.random() * 90) + 10}%`,
+            r: `${(Math.floor(Math.random() * 3)) + 2}`,
             fill: "#fff",    
         }
         let style = `transform-origin: ${attributes.cx} ${attributes.cy}; animation-delay: ${Math.random() * 5}s`;

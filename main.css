@@ -40,7 +40,7 @@ section {
   /* border: 1px solid white; */
 }
 
-#name {
+.name {
   font-family: 'Raleway';
   fill-opacity: 0;
   stroke-dasharray: 100%;
