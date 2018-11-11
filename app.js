@@ -28,26 +28,29 @@ blake.onanimationend = animationEnd;
 
 // calculate and apply eye transform
 const moveEyes = function(e){
-    eyes.forEach(eye => {
-        h = window.innerHeight;
-        w = window.innerWidth;
-        if(anim){
-            setScreenPoint();
-        }
-        if(e){
-            mouseY = e.clientY;
-            mouseX = e.clientX;
-        }
-        px = (mouseX / w) * eyeWidth - (eyeWidth / 2);
-        py = ((mouseY - screenPt.y) / h) * eyeHeight;
-        eye.style.transform = `translate(${px}%, ${py}%)`
-    });
+    function eyeLoop(e){
+        eyes.forEach(eye => {
+            h = window.innerHeight;
+            w = window.innerWidth;
+            if(anim){
+                setScreenPoint();
+            }
+            if(e){
+                mouseY = e.clientY;
+                mouseX = e.clientX;
+            }
+            px = (mouseX / w) * eyeWidth - (eyeWidth / 2);
+            py = ((mouseY - screenPt.y) / h) * eyeHeight;
+            eye.style.transform = `translate(${px}%, ${py}%)`
+        });
+    }
+    window.requestAnimationFrame(timestamp => eyeLoop(e));
 }
 document.onmousemove = moveEyes;
 
 window.onscroll = function(){
     setScreenPoint();
-    moveEyes(null)
+    // moveEyes(null)
 }
 
 // raise brows on navbar hover
