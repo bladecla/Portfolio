@@ -5,7 +5,8 @@ const anchor = document.getElementById("anchor");
 const eyes = Array.from(document.getElementsByClassName("eyes"));
 const eyeWidth = 10, eyeHeight = 5;
 let px = 0, py = 0, h, w, screenPt, mouseX, mouseY; 
-let anim = true;
+let animIsPlaying = true;
+let animationStack = {};
 
 // (re)initialize anchor point for animations
 const getAnchorScreenCoordinates = function(){
@@ -14,44 +15,60 @@ const getAnchorScreenCoordinates = function(){
     return pt.matrixTransform(blake.getScreenCTM());
 }
 const setScreenPoint = () => screenPt = getAnchorScreenCoordinates();
+
+// after initial blake head animation into view
 const animationEnd = function(){
-    anim = false;
+    animIsPlaying = false;
     setScreenPoint();
 }
-const prefixes = ["webkit", "moz"];
-prefixes.forEach((prefix) => {
+blake.onanimationend = animationEnd;
+const vendorPrefixes = ["webkit", "moz"];
+vendorPrefixes.forEach((prefix) => {
     blake.addEventListener(prefix + "AnimationEnd", animationEnd)
     console.log(prefix)
 });
 blake.onload = window.onresize = setScreenPoint;
-blake.onanimationend = animationEnd;
+
+// JS animations
 
 // calculate and apply eye transform
 const moveEyes = function(e){
-    function eyeLoop(e){
-        eyes.forEach(eye => {
-            h = window.innerHeight;
-            w = window.innerWidth;
-            if(anim){
-                setScreenPoint();
-            }
-            if(e){
-                mouseY = e.clientY;
-                mouseX = e.clientX;
-            }
-            px = (mouseX / w) * eyeWidth - (eyeWidth / 2);
-            py = ((mouseY - screenPt.y) / h) * eyeHeight;
-            eye.style.transform = `translate(${px}%, ${py}%)`
-        });
-    }
-    window.requestAnimationFrame(timestamp => eyeLoop(e));
+    eyes.forEach(eye => {
+        h = window.innerHeight;
+        w = window.innerWidth;
+        if(animIsPlaying){
+            setScreenPoint();
+        }
+        if(e){
+            mouseY = e.clientY;
+            mouseX = e.clientX;
+        }
+        px = (mouseX / w) * eyeWidth - (eyeWidth / 2);
+        py = ((mouseY - screenPt.y) / h) * eyeHeight;
+        eye.style.transform = `translate(${px}%, ${py}%)`
+    });
 }
-document.onmousemove = moveEyes;
-
+document.onmousemove = e => scheduleAnimation(moveEyes, e);
 window.onscroll = function(){
     setScreenPoint();
-    // moveEyes(null)
+    scheduleAnimation(moveEyes, null)
 }
+
+//Schedule the animations
+const scheduleAnimation = function(animation, animParams){
+    if (!animationStack.hasOwnProperty(animation.name)){
+        animationStack[animation.name] = {
+            animation: animation,
+            params: animParams
+        };
+    } else if (animParams) {
+        console.log("before:", animParams)
+        animationStack[animation.name].params = animParams;
+        console.log("after:", animationStack[animation.name].params);
+    }
+}
+
+//CSS animations
 
 // raise brows on navbar hover
 const toggleBrows = () => document.getElementById("brows").classList.toggle("raised");
