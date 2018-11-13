@@ -25,7 +25,6 @@ blake.onanimationend = animationEnd;
 const vendorPrefixes = ["webkit", "moz"];
 vendorPrefixes.forEach((prefix) => {
     blake.addEventListener(prefix + "AnimationEnd", animationEnd)
-    console.log(prefix)
 });
 blake.onload = window.onresize = setScreenPoint;
 
@@ -36,10 +35,9 @@ const moveEyes = function(e){
     eyes.forEach(eye => {
         h = window.innerHeight;
         w = window.innerWidth;
-        if(animIsPlaying){
-            setScreenPoint();
-        }
-        if(e){
+        if (animIsPlaying) setScreenPoint();
+        // always use last known mouse position 
+        if (e){     
             mouseY = e.clientY;
             mouseX = e.clientX;
         }
@@ -49,24 +47,38 @@ const moveEyes = function(e){
     });
 }
 document.onmousemove = e => scheduleAnimation(moveEyes, e);
+// document.onmousemove = moveEyes;
 window.onscroll = function(){
     setScreenPoint();
     scheduleAnimation(moveEyes, null)
 }
 
-//Schedule the animations
-const scheduleAnimation = function(animation, animParams){
-    if (!animationStack.hasOwnProperty(animation.name)){
-        animationStack[animation.name] = {
-            animation: animation,
+// smooth scroll
+
+
+// schedule animations
+const scheduleAnimation = function(animation, ...animParams){
+    const name = animation.name;
+    if (animParams != false || !animationStack.hasOwnProperty(name)){
+        animationStack[name] = {
+            func: animation,
             params: animParams
         };
-    } else if (animParams) {
-        console.log("before:", animParams)
-        animationStack[animation.name].params = animParams;
-        console.log("after:", animationStack[animation.name].params);
     }
+        // console.log("scheduled: ", animationStack[name].params)
 }
+
+// run animations
+const loop = function(){
+    if (animationStack) for (task in animationStack){
+       const {func, params} = animationStack[task];
+    //    console.log("ran: ", params)
+       func(...params);
+    }
+    animationStack = {};
+    window.requestAnimationFrame(loop);
+}
+window.requestAnimationFrame(loop);
 
 //CSS animations
 
@@ -86,7 +98,6 @@ const populateSky = function(){
         // if sky loads before blake
         if(!screenPt) {
             setScreenPoint();
-            console.log("corrected");
         }
         let attributes = {
             cx: `${Math.random() * 100}%`,
