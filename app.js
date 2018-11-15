@@ -58,9 +58,9 @@ window.onscroll = function(){
 
 // schedule animations
 const scheduleAnimation = function(animation, ...animParams){
-    const name = animation.name;
-    if (animParams != false || !animationStack.hasOwnProperty(name)){
-        animationStack[name] = {
+    // only schedule events with [null] params if no other events are scheduled
+    if (animParams == true || !animationStack.hasOwnProperty(animation.name)){
+        animationStack[animation.name] = {
             func: animation,
             params: animParams
         };
