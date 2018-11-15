@@ -29,7 +29,7 @@ section {
   z-index: 3;
   display: block;
   width: 75%;
-  min-width: 400px;
+  min-width: 320px;
   max-width: 770px;
   margin: 0 auto;
   pointer-events: none;

@@ -1,3 +1,9 @@
+/* 
+ * Blake Clark Full-Stack Development Portfolio
+ * 
+ *  Written in vanilla JS for practice.
+ */
+
 (function(){
     // try to avoid declaring variables at 60fps
     const blake = document.getElementById("employable-hunk");
@@ -52,8 +58,26 @@
         setAnchorScreenCoordinates();
         scheduleAnimation(moveEyes(null))
     }
-
+let test = 1;
     // smooth scroll
+    const smoothScroll = function(target){
+        let startTime;
+        
+        console.log(test)
+        return function scrollLoop(time){
+            // if (!startTime) startTime = time;
+            // console.log("scrolling to ", target);
+            test++;
+            console.log(test, "frames");
+            if (test <= 60) scheduleAnimation(scrollLoop);
+        }
+    }
+
+    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
+        let id = btn.getAttribute("href");
+        let target = document.querySelector(id);
+        btn.onclick = e => scheduleAnimation(smoothScroll(target))
+    });
 
 
     // schedule animations
@@ -62,19 +86,21 @@
         if (typeof animation === "function"){
             if (!animationStack.hasOwnProperty(animation.name)){
                 animationStack[animation.name] = animation;
+                console.log("scheduled: ", animation.name)
             }
         }
+        if(animationStack) window.requestAnimationFrame(loop);
     }
 
     // run animations
-    const loop = function(){
+    const loop = function(timestamp){
         if (animationStack) for (task in animationStack){
-        animationStack[task]();
+        animationStack[task](timestamp);
+        console.log("ran: ", task)
         }
         animationStack = {};
-        window.requestAnimationFrame(loop);
+        // window.requestAnimationFrame(loop);
     }
-    window.requestAnimationFrame(loop);
 
     ////* CSS animations *////
 
