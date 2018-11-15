@@ -64,6 +64,7 @@
                 animationStack[animation.name] = animation;
             }
         }
+        if(animationStack) window.requestAnimationFrame(loop);
     }
 
     // run animations
@@ -74,7 +75,7 @@
         animationStack = {};
         window.requestAnimationFrame(loop);
     }
-    window.requestAnimationFrame(loop);
+    // window.requestAnimationFrame(loop);
 
     ////* CSS animations *////
 
