@@ -7,7 +7,7 @@
     const eyeWidth = 10, eyeHeight = 5;
     let px = 0, py = 0, screenPt, mouseX, mouseY; 
     let animIsPlaying = true;
-    let animationStack = {}, scrollDuration = 500;
+    let animationStack = {}, scrollDuration = 500, scrollTarget;
 
     // (re)initialize anchor point for animations
     const setAnchorScreenCoordinates = function(){
@@ -56,8 +56,12 @@
     // smooth scroll
         // TODO: cap target scroll position at max scrollable position
     const smoothScroll = function(e){
-        e.preventDefault()
+        e.preventDefault();
         let id = e.target.getAttribute("href");
+
+        console.log(animationStack)
+        if (animationStack.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationStack.scrollLoop;
+        scrollTarget = id;
         let target = document.querySelector(id);
         let startPosition = window.pageYOffset;
         let targetPosition = target.getBoundingClientRect().top;
@@ -74,6 +78,7 @@
         
     };
     
+    // easing function for smooth scroll
     const easeInOutCubic = function (t, b, c, d) {
         t /= d/2;
         if (t < 1) return c/2*t*t*t + b;
