@@ -58,14 +58,13 @@
     const smoothScroll = function(e){
         e.preventDefault();
         let id = e.target.getAttribute("href");
-
-        console.log(animationStack)
-        if (animationStack.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationStack.scrollLoop;
-        scrollTarget = id;
         let target = document.querySelector(id);
         let startPosition = window.pageYOffset;
         let targetPosition = target.getBoundingClientRect().top;
         let amt, elapsed, startTime = null;
+        
+        if (animationStack.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationStack.scrollLoop;
+        scrollTarget = id;
         target.focus();
         
         return function scrollLoop(time){
