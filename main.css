@@ -182,13 +182,13 @@ section {
 
 #projects {
   text-align: center;
-  height: 70vh;
+  height: 100vh;
   background: linear-gradient(#274c77 15%, #427ec2);
   z-index: 10;
 }
 
 #contact {
-  height: 30vh;
+  height: 100vh;
   background-color: teal;
   text-align: center;
 }
