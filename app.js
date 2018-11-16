@@ -1,15 +1,9 @@
-/* 
- * Blake Clark Full-Stack Development Portfolio
- * 
- *  Written in vanilla JS for practice.
- */
-
 (function(){
     // try to avoid declaring variables at 60fps
-    const blake = document.getElementById("employable-hunk");
+    const blake = document.querySelector("#employable-hunk");
     const pt = blake.createSVGPoint();
-    const anchor = document.getElementById("anchor");
-    const eyes = Array.from(document.getElementsByClassName("eyes"));
+    const anchor = document.querySelector("#anchor");
+    const eyes = Array.from(document.querySelectorAll(".eyes"));
     const eyeWidth = 10, eyeHeight = 5;
     let px = 0, py = 0, screenPt, mouseX, mouseY; 
     let animIsPlaying = true;
@@ -58,27 +52,12 @@
         setAnchorScreenCoordinates();
         scheduleAnimation(moveEyes(null))
     }
-let test = 1;
-    // smooth scroll
-    const smoothScroll = function(target){
-        let startTime;
-        
-        console.log(test)
-        return function scrollLoop(time){
-            // if (!startTime) startTime = time;
-            // console.log("scrolling to ", target);
-            test++;
-            console.log(test, "frames");
-            if (test <= 60) scheduleAnimation(scrollLoop);
-        }
-    }
 
+    // smooth scroll
     Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
         let id = btn.getAttribute("href");
-        let target = document.querySelector(id);
-        btn.onclick = e => scheduleAnimation(smoothScroll(target))
-    });
 
+    });
 
     // schedule animations
         // animations with parameters should use closures!
@@ -86,20 +65,20 @@ let test = 1;
         if (typeof animation === "function"){
             if (!animationStack.hasOwnProperty(animation.name)){
                 animationStack[animation.name] = animation;
-                console.log("scheduled: ", animation.name)
+                // console.log("scheduled ", animation.name)
             }
         }
         if(animationStack) window.requestAnimationFrame(loop);
     }
 
     // run animations
-    const loop = function(timestamp){
+    const loop = function(){
         if (animationStack) for (task in animationStack){
-        animationStack[task](timestamp);
-        console.log("ran: ", task)
+            if (animationStack[task]()){
+
+            } else delete animationStack[task];
         }
-        animationStack = {};
-        // window.requestAnimationFrame(loop);
+        // console.log("ran ", task)
     }
 
     ////* CSS animations *////
