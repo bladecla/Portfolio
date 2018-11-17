@@ -150,10 +150,11 @@ section {
 .navbutton {
   width: 100%;
   text-align: center;
-  transition: background-color 200ms ease;
+  transition: background-color 200ms ease, width 200ms ease;
 }
 .navbutton.red {
   background-color: darkred;
+  width: 0%;
 }
 .navbutton.red:hover {
   background-color: red;
@@ -188,7 +189,7 @@ section {
 }
 
 #contact {
-  height: 100vh;
+  height: 30vh;
   background-color: teal;
   text-align: center;
 }

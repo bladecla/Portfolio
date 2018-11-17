@@ -7,7 +7,7 @@
     const eyeWidth = 10, eyeHeight = 5;
     let px = 0, py = 0, screenPt, mouseX, mouseY; 
     let animIsPlaying = true;
-    let animationStack = {}, scrollDuration = 500, scrollTarget;
+    let animationStack = {}, scrollDuration = 600, scrollTarget;
 
     // (re)initialize anchor point for animations
     const setAnchorScreenCoordinates = function(){
@@ -51,16 +51,19 @@
     window.onscroll = function(){
         setAnchorScreenCoordinates();
         scheduleAnimation(moveEyes(null))
+        document.querySelector(".navbutton.red").style.width = window.pageYOffset ? "100%" : "0%"
     }
 
     // smooth scroll
-        // TODO: cap target scroll position at max scrollable position
     const smoothScroll = function(e){
         e.preventDefault();
         let id = e.target.getAttribute("href");
         let target = document.querySelector(id);
         let startPosition = window.pageYOffset;
-        let targetPosition = target.getBoundingClientRect().top;
+
+        // cap target scroll position at max scrollable position
+        let maxScrollY = document.documentElement.scrollHeight - startPosition - window.innerHeight;
+        let targetPosition = Math.min(target.getBoundingClientRect().top, maxScrollY);
         let amt, elapsed, startTime = null;
         
         if (animationStack.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationStack.scrollLoop;
@@ -77,6 +80,10 @@
         
     };
     
+    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
+        btn.onclick = e => scheduleAnimation(smoothScroll(e));
+    });
+    
     // easing function for smooth scroll
     const easeInOutCubic = function (t, b, c, d) {
         t /= d/2;
@@ -85,9 +92,6 @@
         return c/2*(t*t*t + 2) + b;
     };
     
-    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
-        btn.onclick = e => scheduleAnimation(smoothScroll(e));
-    });
 
     // schedule animations
         // animations with parameters should use closures!
@@ -111,12 +115,10 @@
             // console.log("ran ", task)
         }
     }
-<<<<<<< HEAD
-    // window.requestAnimationFrame(loop);
-=======
->>>>>>> scroll
 
     ////* CSS animations *////
+
+    
 
     // raise brows on navbar hover
     const nav = document.querySelector("#navbar");
@@ -128,11 +130,6 @@
     const populateSky = function(){
         for(let i = 0; i < starCount; i++){
             let star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            
-            // // if sky loads before blake
-            // if(!screenPt) {
-            //     setAnchorScreenCoordinates();
-            // }
             let attributes = {
                 cx: `${Math.random() * 100}%`,
                 cy: `${(Math.random() * 90) + 10}%`,
