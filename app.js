@@ -3,9 +3,14 @@
     const blake = document.querySelector("#employable-hunk");
     const pt = blake.createSVGPoint();
     const anchor = document.querySelector("#anchor");
+    const nav = document.querySelector("#navbar");
+    const backToTop = document.querySelector(".navbutton.red");
+    const topAnchor = backToTop.querySelector("a");
+    const sky = document.querySelector("#nightsky"), starCount = 200;
     const eyes = Array.from(document.querySelectorAll(".eyes"));
+    const eyelids = document.querySelector("#eyelids");
     const eyeWidth = 10, eyeHeight = 5;
-    let px = 0, py = 0, screenPt, mouseX, mouseY; 
+    let screenPt, mouseX, mouseY, px = 0, py = 0; 
     let animIsPlaying = true;
     let animationStack = {}, scrollDuration = 600, scrollTarget;
     
@@ -19,27 +24,24 @@
         return screenPt;
     }
 
-    
     // schedule animations
-    // animations with parameters should use closures!
+    //// animations with parameters should use closures!
     const scheduleAnimation = function(animation){
         if (typeof animation === "function"){
             if (!animationStack.hasOwnProperty(animation.name)){
                 animationStack[animation.name] = animation;
-                // console.log("scheduled ", animation.name)
             }
         }
         if(animationStack) window.requestAnimationFrame(loop);
     }
     
     // run animations
-    // animations should return true for loops
+    //// looping animations should return true
     const loop = function(timestamp){
         if (animationStack) for (task in animationStack){
             if (animationStack[task](timestamp)){
                 scheduleAnimation(animationStack[task])
             } else delete animationStack[task];
-            // console.log("ran ", task)
         }
     }
     
@@ -77,12 +79,13 @@
         let id = e.target.getAttribute("href");
         let target = document.querySelector(id);
         let startPosition = window.pageYOffset;
+        let amt, elapsed, startTime = null;
         
         // cap target scroll position at max scrollable position
         let maxScrollY = document.documentElement.scrollHeight - startPosition - window.innerHeight;
         let targetPosition = Math.min(target.getBoundingClientRect().top, maxScrollY);
-        let amt, elapsed, startTime = null;
         
+        // allow interruption if target has changed
         if (animationStack.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationStack.scrollLoop;
         scrollTarget = id;
         target.focus();
@@ -94,9 +97,7 @@
             window.scrollTo(0, amt)
             return elapsed < scrollDuration;
         }
-        
     };
-    
     
     // easing function for smooth scroll
     const easeInOutCubic = function (t, b, c, d) {
@@ -110,46 +111,47 @@
     const hideBackToTop = function(isScrolled, button){
         return function setNavButtonStyle(){
             button.style.width = isScrolled ? "100%" : "0%";
-            button.querySelector("a").style.color = isScrolled ? "white" : "transparent";
+            topAnchor.style.color = isScrolled ? "white" : "transparent";
         }
     }
     
-    
     // set event handlers
     blake.onload = window.onresize = setAnchorScreenCoordinates;
-    addAnimationEndListener(blake, function(){
-        animIsPlaying = false;
-        setAnchorScreenCoordinates();
-        document.querySelector("#eyelids").classList.toggle("blink");
+    document.onmousemove = e => scheduleAnimation(moveEyes(e));
+    addAnimationEndListener(blake, function(e){
+        if (animIsPlaying){ 
+            animIsPlaying = false;
+            setAnchorScreenCoordinates();
+        }
+        if (e.animationName === "blink") setTimeout(blink, Math.floor(Math.random() * 3500) + 4000);
+        blink();
     });
     Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
         btn.onclick = e => scheduleAnimation(smoothScroll(e));
     });
-    document.onmousemove = e => scheduleAnimation(moveEyes(e));
     window.onscroll = function(){
         setAnchorScreenCoordinates();
         scheduleAnimation(moveEyes(null))
-        scheduleAnimation(hideBackToTop(window.pageYOffset > 0, document.querySelector(".navbutton.red")))
+        scheduleAnimation(hideBackToTop(window.pageYOffset > 0, backToTop))
     }
-    
     
     ////* CSS animations *////
     
     // raise brows on navbar hover
-    const nav = document.querySelector("#navbar");
     nav.onmouseenter = nav.onmouseleave = () => document.getElementById("brows").classList.toggle("raised");;
-
-
+    
+    // blink
+    const blink = () => eyelids.classList.toggle("blink");
     
     // populate sky with stars
-    const starCount = 200;
-    const sky = document.querySelector("#nightsky");
+    //// TODO: make compatible with any browser besides Chrome
+    
     const populateSky = function(){
         for(let i = 0; i < starCount; i++){
             let star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             let attributes = {
-                cx: `${Math.random() * 100}vw`,
-                cy: `${(Math.random() * 90) + 10}vh`,
+                cx: `${Math.random() * 100}%`,
+                cy: `${(Math.random() * 90) + 10}%`,
                 r: `${(Math.random() * 3) + 1}`,
                 fill: "#fff",    
             }

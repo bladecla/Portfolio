@@ -8,29 +8,31 @@ html, body {
   font-family: "Raleway";
 }
 
-#seo-h1{
-  position: absolute;
-  top: -1000px;
-  opacity: 0;
-  color: white;
-  border: 1px solid red
-}
-
 section {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
+#welcome-section {
+  padding: 0px;
+  display: block;
+  height: 100vh;
+  background: linear-gradient(transparent 30%, rgba(102, 51, 153, .60) 65%, rgba(138, 222, 255, 0.75) 96.5%);
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
 #welcome {
   text-align: center;
   position: relative;
-  top: 13%;
+  top: 12%;
   z-index: 3;
   display: block;
   width: 75%;
   min-width: 320px;
-  max-width: 770px;
+  max-width: 1000px;
   margin: 0 auto;
   pointer-events: none;
   user-select: none;
@@ -44,6 +46,12 @@ section {
   animation: draw 1.5s linear forwards ;
 }
 
+#title {
+  font-family: 'Yellowtail';
+  fill-opacity: 0;
+  animation: draw 1.5s 350ms linear forwards ;
+}
+
 @keyframes draw {
   75% {
     stroke-dashoffset: 25%;
@@ -53,22 +61,6 @@ section {
     stroke-dashoffset: 0%;
     fill-opacity: 1;
   }
-}
-
-#title {
-  font-family: 'Yellowtail';
-  fill-opacity: 0;
-  animation: draw 1.5s 350ms linear forwards ;
-}
-
-#welcome-section {
-  padding: 0px;
-  display: block;
-  height: 100vh;
-  background: linear-gradient(transparent 30%, rgba(102, 51, 153, .60) 65%, rgba(138, 222, 255, 0.75) 96.5%);
-  color: white;
-  overflow: hidden;
-  position: relative;
 }
 
 #sky-container{
@@ -136,12 +128,8 @@ section {
   transform: translateY(-5%);
 }
 
-/* #eyelids{
-  transition: all 200ms ease-out;
-} */
-
 #eyelids.blink {
-  animation: blink 500ms ease    ;
+  animation: blink 400ms ease-out;
 }
 
 @keyframes blink {
@@ -225,11 +213,19 @@ a {
 @media (max-width: 576px) {
   #navbar {
     height: 12vh;
+    font-size: 1em;
   }
   
   #welcome {
-    top: 15%
+    top: 25%;
   }
 }
 
+#seo-h1{
+  position: absolute;
+  top: -1000px;
+  opacity: 0;
+  color: white;
+  border: 1px solid red
+}
 /*# sourceMappingURL=main.css.map */
