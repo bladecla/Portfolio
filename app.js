@@ -9,6 +9,8 @@
     let animIsPlaying = true;
     let animationStack = {}, scrollDuration = 600, scrollTarget;
 
+    //// Animation helpers ////
+    
     // (re)initialize anchor point for animations
     const setAnchorScreenCoordinates = function(){
         pt.x = anchor.getAttribute("cx");
@@ -16,24 +18,41 @@
         screenPt = pt.matrixTransform(blake.getScreenCTM());
         return screenPt;
     }
-
-        // after initial blake head pop-up animation
+    
+    // after initial blake head pop-up animation
     const animationEnd = function(){
         animIsPlaying = false;
         setAnchorScreenCoordinates();
     }
-    blake.onanimationend = animationEnd;
-    const vendorPrefixes = ["webkit", "moz"];
-    vendorPrefixes.forEach((prefix) => {
-        blake.addEventListener(prefix + "AnimationEnd", animationEnd)
-    });
-    blake.onload = window.onresize = setAnchorScreenCoordinates;
+    
+    // schedule animations
+    // animations with parameters should use closures!
+    const scheduleAnimation = function(animation){
+        if (typeof animation === "function"){
+            if (!animationStack.hasOwnProperty(animation.name)){
+                animationStack[animation.name] = animation;
+                // console.log("scheduled ", animation.name)
+            }
+        }
+        if(animationStack) window.requestAnimationFrame(loop);
+    }
+    
+    // run animations
+    // animations should return true for loops
+    const loop = function(timestamp){
+        if (animationStack) for (task in animationStack){
+            if (animationStack[task](timestamp)){
+                scheduleAnimation(animationStack[task])
+            } else delete animationStack[task];
+            // console.log("ran ", task)
+        }
+    }
 
     ////* JS animations *////
 
     // calculate and apply eye transform
     const moveEyes = function(e){
-    return function eyeStep(){     
+        return function eyeStep(){     
             eyes.forEach(eye => {
                 if (animIsPlaying) setAnchorScreenCoordinates();
                 // always use last known mouse position 
@@ -47,12 +66,6 @@
             });
         }
     }
-    document.onmousemove = e => scheduleAnimation(moveEyes(e));
-    window.onscroll = function(){
-        setAnchorScreenCoordinates();
-        scheduleAnimation(moveEyes(null))
-        document.querySelector(".navbutton.red").style.width = window.pageYOffset ? "100%" : "0%"
-    }
 
     // smooth scroll
     const smoothScroll = function(e){
@@ -60,7 +73,7 @@
         let id = e.target.getAttribute("href");
         let target = document.querySelector(id);
         let startPosition = window.pageYOffset;
-
+        
         // cap target scroll position at max scrollable position
         let maxScrollY = document.documentElement.scrollHeight - startPosition - window.innerHeight;
         let targetPosition = Math.min(target.getBoundingClientRect().top, maxScrollY);
@@ -80,9 +93,6 @@
         
     };
     
-    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
-        btn.onclick = e => scheduleAnimation(smoothScroll(e));
-    });
     
     // easing function for smooth scroll
     const easeInOutCubic = function (t, b, c, d) {
@@ -92,38 +102,39 @@
         return c/2*(t*t*t + 2) + b;
     };
     
-
-    // schedule animations
-        // animations with parameters should use closures!
-    const scheduleAnimation = function(animation){
-        if (typeof animation === "function"){
-            if (!animationStack.hasOwnProperty(animation.name)){
-                animationStack[animation.name] = animation;
-                // console.log("scheduled ", animation.name)
-            }
-        }
-        if(animationStack) window.requestAnimationFrame(loop);
-    }
-
-    // run animations
-        // animations should return true for loops
-    const loop = function(timestamp){
-        if (animationStack) for (task in animationStack){
-            if (animationStack[task](timestamp)){
-                scheduleAnimation(animationStack[task])
-            } else delete animationStack[task];
-            // console.log("ran ", task)
+    // hide Back To Top
+    const hideBackToTop = function(isScrolled, button){
+        return function setNavButtonStyle(){
+            button.style.width = isScrolled ? "100%" : "0%";
+            button.querySelector("a").style.color = isScrolled ? "white" : "transparent";
         }
     }
-
-    ////* CSS animations *////
-
     
-
+    
+    // set event handlers
+    blake.onload = window.onresize = setAnchorScreenCoordinates;
+    blake.onanimationend = animationEnd;
+    const vendorPrefixes = ["webkit", "moz"];
+    vendorPrefixes.forEach((prefix) => {
+        blake.addEventListener(prefix + "AnimationEnd", animationEnd)
+    });
+    document.onmousemove = e => scheduleAnimation(moveEyes(e));
+    window.onscroll = function(){
+        setAnchorScreenCoordinates();
+        scheduleAnimation(moveEyes(null))
+        scheduleAnimation(hideBackToTop(window.pageYOffset > 0, document.querySelector(".navbutton.red")))
+    }
+    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
+        btn.onclick = e => scheduleAnimation(smoothScroll(e));
+    });
+    
+    
+    ////* CSS animations *////
+    
     // raise brows on navbar hover
     const nav = document.querySelector("#navbar");
     nav.onmouseenter = nav.onmouseleave = () => document.getElementById("brows").classList.toggle("raised");;
-
+    
     // populate sky with stars
     const starCount = 200;
     const sky = document.querySelector("#nightsky");
@@ -131,8 +142,8 @@
         for(let i = 0; i < starCount; i++){
             let star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             let attributes = {
-                cx: `${Math.random() * 100}%`,
-                cy: `${(Math.random() * 90) + 10}%`,
+                cx: `${Math.random() * 100}vw`,
+                cy: `${(Math.random() * 90) + 10}vh`,
                 r: `${(Math.random() * 3) + 1}`,
                 fill: "#fff",    
             }

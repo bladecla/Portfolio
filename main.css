@@ -150,11 +150,14 @@ section {
 .navbutton {
   width: 100%;
   text-align: center;
-  transition: background-color 200ms ease, width 200ms ease;
+  transition: all 200ms ease;
 }
 .navbutton.red {
   background-color: darkred;
   width: 0%;
+}
+.navbutton.red a {
+  color: transparent;
 }
 .navbutton.red:hover {
   background-color: red;
@@ -173,6 +176,9 @@ section {
 }
 
 .navbutton a {
+  text-overflow: clip;
+  overflow: hidden;
+  white-space: nowrap;
   width: 100%;
   height: 100%;
   display: flex;
