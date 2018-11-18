@@ -45,7 +45,7 @@
         }
     }
     
-    //add animationend with vendor prefixes
+    // add animationend with vendor prefixes
     const addAnimationEndListener = function(element, callback){
         const vendorPrefixes = ["webkit", "moz"];
         element.onanimationend = callback;
@@ -53,6 +53,9 @@
             element.addEventListener(prefix + "AnimationEnd", callback)
         });
     }
+
+    // RNG
+    const random = (min = 0, max) => Math.random() * (max - min) + min;
 
     ////* JS animations *////
 
@@ -123,7 +126,7 @@
             animIsPlaying = false;
             setAnchorScreenCoordinates();
         }
-        if (e.animationName === "blink") setTimeout(blink, Math.floor(Math.random() * 3500) + 4000);
+        if (e.animationName === "blink") setTimeout(blink, Math.floor(random(4000, 7500)));
         blink();
     });
     Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
@@ -147,16 +150,20 @@
     //// TODO: make compatible with any browser besides Chrome
     
     const populateSky = function(){
+        let star, attributes;
+        let [viewBoxWidth, viewBoxHeight] = sky.getAttributeNS(null, "viewBox").match(/\d+/g).map(n => parseInt(n)).slice(2);
+        const prefixes = ["", "-webkit-", "-moz-", "-ms-", "-o-"];
         for(let i = 0; i < starCount; i++){
-            let star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            let attributes = {
-                cx: `${Math.random() * 100}%`,
-                cy: `${(Math.random() * 90) + 10}%`,
-                r: `${(Math.random() * 3) + 1}`,
+            star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            attributes = {
+                cx: `${random(0, viewBoxWidth)}`,
+                cy: `${random(viewBoxHeight/10, viewBoxHeight)}`,
+                r: `${random(1, 4)}`,
                 fill: "#fff",    
             }
-            let style = `transform-origin: ${attributes.cx} ${attributes.cy}; animation-delay: ${Math.random() * 5}s`;
-            attributes.style = style;
+            attributes.style = `animation-delay: ${random(0, 5)}s; transform-origin: ${attributes.cx} ${attributes.cy};`;
+            // prefixes.forEach(prefix => attributes.style += ` ${prefix}transform-origin: ${attributes.cx} ${attributes.cy};`);
+            // attributes["transform-origin"] = `${attributes.cx} ${attributes.cy}`;
             for (let key in attributes){
                 star.setAttributeNS(null, key, attributes[key]);
             }
@@ -164,5 +171,5 @@
             sky.appendChild(star);
         }
     }
-    sky.onload = populateSky;
+    window.onload = populateSky;
 })();

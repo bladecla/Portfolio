@@ -82,16 +82,22 @@ section {
 .star {
   opacity: 0.6;
   animation: twinkle 3s ease  infinite forwards;
+  -ms-animation: none;
+  transform-box: fill-box; /* Firefox breaks animations without this*/
 }
 
 @keyframes twinkle{
   80% {
     opacity: 0.6;
     transform: scale(1);
+    -ms-transform: scale(1);
+    -webkit-transform: scale(1);
   }
   90% {
     opacity: 1;
-    transform: scale(1.3)
+    transform: scale(1.3);
+    -ms-transform: scale(1.3);
+    -webkit-transform: scale(1.3);
   }
 }
 
@@ -126,18 +132,30 @@ section {
 
 #brows.raised {
   transform: translateY(-5%);
+  -ms-transform: translateY(-5%);
+  -webkit-transform: translateY(-5%);
+}
+
+#eyelids{
+  -ms-transform-box: fill-box;
+  transform-box: fill-box; /* Firefox breaks animations without this*/
 }
 
 #eyelids.blink {
   animation: blink 400ms ease-out;
+  -ms-animation: none;
 }
 
 @keyframes blink {
   30% {
     transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
   }
   100% {
     transform: scale(1, 0);
+    -webkit-transform: scale(1, 0);
+    -ms-transform: scale(1, 0);
   }
 }
 
