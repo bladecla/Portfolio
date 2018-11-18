@@ -8,7 +8,7 @@
     let px = 0, py = 0, screenPt, mouseX, mouseY; 
     let animIsPlaying = true;
     let animationStack = {}, scrollDuration = 600, scrollTarget;
-
+    
     //// Animation helpers ////
     
     // (re)initialize anchor point for animations
@@ -18,12 +18,7 @@
         screenPt = pt.matrixTransform(blake.getScreenCTM());
         return screenPt;
     }
-    
-    // after initial blake head pop-up animation
-    const animationEnd = function(){
-        animIsPlaying = false;
-        setAnchorScreenCoordinates();
-    }
+
     
     // schedule animations
     // animations with parameters should use closures!
@@ -46,6 +41,15 @@
             } else delete animationStack[task];
             // console.log("ran ", task)
         }
+    }
+    
+    //add animationend with vendor prefixes
+    const addAnimationEndListener = function(element, callback){
+        const vendorPrefixes = ["webkit", "moz"];
+        element.onanimationend = callback;
+        vendorPrefixes.forEach((prefix) => {
+            element.addEventListener(prefix + "AnimationEnd", callback)
+        });
     }
 
     ////* JS animations *////
@@ -113,10 +117,13 @@
     
     // set event handlers
     blake.onload = window.onresize = setAnchorScreenCoordinates;
-    blake.onanimationend = animationEnd;
-    const vendorPrefixes = ["webkit", "moz"];
-    vendorPrefixes.forEach((prefix) => {
-        blake.addEventListener(prefix + "AnimationEnd", animationEnd)
+    addAnimationEndListener(blake, function(){
+        animIsPlaying = false;
+        setAnchorScreenCoordinates();
+        document.querySelector("#eyelids").classList.toggle("blink");
+    });
+    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
+        btn.onclick = e => scheduleAnimation(smoothScroll(e));
     });
     document.onmousemove = e => scheduleAnimation(moveEyes(e));
     window.onscroll = function(){
@@ -124,9 +131,6 @@
         scheduleAnimation(moveEyes(null))
         scheduleAnimation(hideBackToTop(window.pageYOffset > 0, document.querySelector(".navbutton.red")))
     }
-    Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
-        btn.onclick = e => scheduleAnimation(smoothScroll(e));
-    });
     
     
     ////* CSS animations *////
@@ -134,6 +138,8 @@
     // raise brows on navbar hover
     const nav = document.querySelector("#navbar");
     nav.onmouseenter = nav.onmouseleave = () => document.getElementById("brows").classList.toggle("raised");;
+
+
     
     // populate sky with stars
     const starCount = 200;
