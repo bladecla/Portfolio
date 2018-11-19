@@ -1,4 +1,10 @@
+/*
+* Blake Clark 2018
+* Written in vanilla JS for practice 
+*/
+
 (function(){
+
     // try to avoid declaring variables at 60fps
     const blake = document.querySelector("#employable-hunk");
     const pt = blake.createSVGPoint();
@@ -150,14 +156,11 @@
     }
     
     // populate sky with stars
-    //// TODO: make compatible with any browser besides Chrome
-    
     const populateSky = function(){
         let star, attributes;
         let skyPt = sky.createSVGPoint(), skyScreenPt;
         let [viewBoxWidth, viewBoxHeight] = sky.getAttributeNS(null, "viewBox").match(/\d+/g).map(n => parseInt(n)).slice(2);
-        console.log(isIE)
-        // const prefixes = ["", "-webkit-", "-moz-", "-ms-", "-o-"];
+
         for(let i = 0; i < starCount; i++){
             star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             attributes = {
@@ -170,8 +173,6 @@
             skyPt.y = attributes.cy;
             skyScreenPt = skyPt.matrixTransform(sky.getScreenCTM());
             attributes.style = `animation-delay: ${random(0, 5)}s; transform-origin: ${skyScreenPt.x} ${skyScreenPt.y};`;
-            // prefixes.forEach(prefix => attributes.style += ` ${prefix}transform-origin: ${attributes.cx} ${attributes.cy};`);
-            // attributes["transform-origin"] = `${attributes.cx} ${attributes.cy}`;
             for (let key in attributes){
                 star.setAttributeNS(null, key, attributes[key]);
             }
