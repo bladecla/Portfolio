@@ -10,6 +10,7 @@
     const eyes = Array.from(document.querySelectorAll(".eyes"));
     const eyelids = document.querySelector("#eyelids");
     const eyeWidth = 10, eyeHeight = 5;
+    const isIE = /Edge|MSIE|Trident/.test(window.navigator.userAgent);
     let screenPt, mouseX, mouseY, px = 0, py = 0; 
     let animIsPlaying = true;
     let animationStack = {}, scrollDuration = 600, scrollTarget;
@@ -17,9 +18,9 @@
     //// Animation helpers ////
     
     // (re)initialize anchor point for animations
+    pt.x = anchor.getAttribute("cx");
+    pt.y = anchor.getAttribute("cy");
     const setAnchorScreenCoordinates = function(){
-        pt.x = anchor.getAttribute("cx");
-        pt.y = anchor.getAttribute("cy");
         screenPt = pt.matrixTransform(blake.getScreenCTM());
         return screenPt;
     }
@@ -126,7 +127,7 @@
             animIsPlaying = false;
             setAnchorScreenCoordinates();
         }
-        if (e.animationName === "blink") setTimeout(blink, Math.floor(random(4000, 7500)));
+        if (e.animationName.includes("blink")) setTimeout(blink, Math.floor(random(4000, 7500)));
         blink();
     });
     Array.from(document.querySelectorAll(".navlink")).forEach(btn => {
@@ -144,15 +145,19 @@
     nav.onmouseenter = nav.onmouseleave = () => document.getElementById("brows").classList.toggle("raised");;
     
     // blink
-    const blink = () => eyelids.classList.toggle("blink");
+    const blink = function(){ 
+        eyelids.classList.toggle(isIE ? "blinkIE" : "blink");
+    }
     
     // populate sky with stars
     //// TODO: make compatible with any browser besides Chrome
     
     const populateSky = function(){
         let star, attributes;
+        let skyPt = sky.createSVGPoint(), skyScreenPt;
         let [viewBoxWidth, viewBoxHeight] = sky.getAttributeNS(null, "viewBox").match(/\d+/g).map(n => parseInt(n)).slice(2);
-        const prefixes = ["", "-webkit-", "-moz-", "-ms-", "-o-"];
+        console.log(isIE)
+        // const prefixes = ["", "-webkit-", "-moz-", "-ms-", "-o-"];
         for(let i = 0; i < starCount; i++){
             star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             attributes = {
@@ -161,13 +166,16 @@
                 r: `${random(1, 4)}`,
                 fill: "#fff",    
             }
-            attributes.style = `animation-delay: ${random(0, 5)}s; transform-origin: ${attributes.cx} ${attributes.cy};`;
+            skyPt.x = attributes.cx;
+            skyPt.y = attributes.cy;
+            skyScreenPt = skyPt.matrixTransform(sky.getScreenCTM());
+            attributes.style = `animation-delay: ${random(0, 5)}s; transform-origin: ${skyScreenPt.x} ${skyScreenPt.y};`;
             // prefixes.forEach(prefix => attributes.style += ` ${prefix}transform-origin: ${attributes.cx} ${attributes.cy};`);
             // attributes["transform-origin"] = `${attributes.cx} ${attributes.cy}`;
             for (let key in attributes){
                 star.setAttributeNS(null, key, attributes[key]);
             }
-            star.classList.add("star");
+            if (!isIE) star.classList.add("star");
             sky.appendChild(star);
         }
     }

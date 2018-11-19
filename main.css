@@ -82,7 +82,6 @@ section {
 .star {
   opacity: 0.6;
   animation: twinkle 3s ease  infinite forwards;
-  -ms-animation: none;
   transform-box: fill-box; /* Firefox breaks animations without this*/
 }
 
@@ -90,7 +89,7 @@ section {
   80% {
     opacity: 0.6;
     transform: scale(1);
-    -ms-transform: scale(1);
+    -ms-transform: scale(1); 
     -webkit-transform: scale(1);
   }
   90% {
@@ -137,25 +136,75 @@ section {
 }
 
 #eyelids{
-  -ms-transform-box: fill-box;
-  transform-box: fill-box; /* Firefox breaks animations without this*/
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -webkit-transform: scale(1, 0);
+  /* Firefox breaks animations without this */
+  transform-box: fill-box; 
+  -webkit-transform-box: unset;
+  
+  visibility: visible;
 }
 
 #eyelids.blink {
   animation: blink 400ms ease-out;
-  -ms-animation: none;
+}
+
+#eyelids.blinkIE {
+  -ms-transform: translate(0%, -30%);
+  transform: translate(0%, -30%);
+  -webkit-transform: translate(0%, -30%);
+  -webkit-transform-origin: 50% 0%;
+  -webkit-animation: blinkIE 400ms linear normal backwards;
+  animation: blinkIE 400ms linear normal backwards;
 }
 
 @keyframes blink {
   30% {
+    -ms-transform: scale(1, 1);
     transform: scale(1, 1);
     -webkit-transform: scale(1, 1);
-    -ms-transform: scale(1, 1);
   }
   100% {
+    -ms-transform: scale(1, 0);
     transform: scale(1, 0);
     -webkit-transform: scale(1, 0);
-    -ms-transform: scale(1, 0);
+  }
+}
+
+@keyframes blinkIE {
+  0%{
+    -ms-transform: translate(0%, -30%);
+    transform: translate(0%, -30%);
+    -webkit-transform: translate(0%, -30%);
+  }
+  30% {
+    -ms-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
+    -webkit-transform: translate(0%, 0%);
+  }
+  100% {
+    -ms-transform: translate(0%, -30%);
+    transform: translate(0%, -30%);
+    -webkit-transform: translate(0%, -30%);
+  }
+}
+
+@-webkit-keyframes blinkIE {
+  0%{
+    -ms-transform: translate(0%, -30%);
+    transform: translate(0%, -30%);
+    -webkit-transform: translate(0%, -30%);
+  }
+  1% {
+    -ms-transform: translate(0%, 0%);
+    transform: translate(0%, 0%);
+    -webkit-transform: translate(0%, 0%);
+  }
+  100% {
+    -ms-transform: translate(0%, -30%);
+    transform: translate(0%, -30%);
+    -webkit-transform: translate(0%, -30%);
   }
 }
 
