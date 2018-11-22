@@ -19,7 +19,7 @@
     const isIE = /Edge|MSIE|Trident/.test(window.navigator.userAgent);
     let screenPt, mouseX, mouseY, px = 0, py = 0; 
     let animIsPlaying = true;
-    let animationStack = {}, scrollDuration = 600, scrollTarget;
+    let animationQueue = {}, scrollDuration = 600, scrollTarget;
     
     //// Animation helpers ////
     
@@ -35,20 +35,20 @@
     //// animations with parameters should use closures!
     const scheduleAnimation = function(animation){
         if (typeof animation === "function"){
-            if (!animationStack.hasOwnProperty(animation.name)){
-                animationStack[animation.name] = animation;
+            if (!animationQueue.hasOwnProperty(animation.name)){
+                animationQueue[animation.name] = animation;
             }
         }
-        if(animationStack) window.requestAnimationFrame(loop);
+        if(animationQueue) window.requestAnimationFrame(loop);
     }
     
     // run animations
     //// looping animations should return true
     const loop = function(timestamp){
-        if (animationStack) for (task in animationStack){
-            if (animationStack[task](timestamp)){
-                scheduleAnimation(animationStack[task])
-            } else delete animationStack[task];
+        if (animationQueue) for (task in animationQueue){
+            if (animationQueue[task](timestamp)){
+                scheduleAnimation(animationQueue[task])
+            } else delete animationQueue[task];
         }
     }
     
@@ -96,7 +96,7 @@
         let targetPosition = Math.min(target.getBoundingClientRect().top, maxScrollY);
         
         // allow interruption if target has changed
-        if (animationStack.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationStack.scrollLoop;
+        if (animationQueue.hasOwnProperty("scrollLoop") && scrollTarget !== id) delete animationQueue.scrollLoop;
         scrollTarget = id;
         target.focus();
         
